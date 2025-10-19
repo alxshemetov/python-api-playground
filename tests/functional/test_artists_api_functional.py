@@ -1,9 +1,12 @@
 import http
 import allure
+import pytest
 
-from python_api_playground.models.artists_model import ArtistResponse, ArtistUpdate
+from python_api_playground.models.artists_model import ArtistResponse, ArtistUpdate, ErrorResponse, ArtistCreate
 from tests.functional.conftest import fake
 
+
+# --- Positive Tests ---
 
 @allure.title("Create Artist")
 def test_create_artist(artists_service, artist_steps, generate_artist_data):
@@ -95,9 +98,121 @@ def test_delete_artist(artists_service, artist_steps, generate_artist_data):
 
     # Step 2: Delete the artist.
     delete_response = artists_service.delete_artist(str(user_id))
-    assert delete_response.status_code == http.HTTPStatus.OK
-    assert delete_response.json() == True
+    assert delete_response.root is True
 
     # Step 3: Verify the artist is no longer in the full list.
     all_artists_response = artists_service.get_all_artists()
     assert user_id not in [artist.user_id for artist in all_artists_response]
+
+
+# --- Negative Tests ---
+
+@allure.title("Create artist with empty field returns 400")
+@pytest.mark.parametrize(
+    "artist_payload",
+    [
+        {"first_name": "", "last_name": "Monet", "birth_year": "1840"},
+        {"first_name": "Claude", "last_name": "", "birth_year": "1840"},
+        {"first_name": "Claude", "last_name": "Monet", "birth_year": ""},
+    ],
+    ids=[
+        "empty_first_name",
+        "empty_last_name",
+        "empty_birth_year",
+    ],
+)
+def test_create_artist_with_empty_field(artists_service, artist_payload):
+    # Step 1: Create an artist model instance from a payload with an empty field.
+    invalid_artist = ArtistCreate(**artist_payload)
+
+    # Step 2: Attempt to create the artist.
+    error_response = artists_service.create_artist(invalid_artist)
+
+    # Step 3: Verify the error response is returned.
+    assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
+
+    # Step 4: Verify the error message indicates that fields cannot be empty.
+    response_json = error_response.json()
+    assert "error" in response_json
+    assert "All fields must be non-empty strings" in response_json["error"]
+
+
+@allure.title("Create artist with missing required field returns 400")
+@pytest.mark.parametrize(
+    "artist_payload",
+    [
+        {"last_name": "Monet", "birth_year": "1840"},  # Missing 'first_name'
+        {"first_name": "Claude", "birth_year": "1840"},  # Missing 'last_name'
+        {"first_name": "Claude", "last_name": "Monet"},  # Missing 'birth_year'
+    ],
+    ids=[
+        "missing_first_name",
+        "missing_last_name",
+        "missing_birth_year",
+    ],
+)
+def test_create_artist_with_missing_field(artists_service, artist_payload):
+    # Step 1: Create an artist model instance from a payload with a missing required field.
+    invalid_artist = ArtistCreate(**artist_payload)
+
+    # Step 2: Attempt to create the artist. The service will now exclude the missing (None) fields.
+    error_response = artists_service.create_artist(invalid_artist)
+
+    # Step 3: Verify the error response is returned.
+    assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
+
+    # Step 4: Verify the error message indicates that a key is missing.
+    response_json = error_response.json()
+    assert "error" in response_json
+    assert "Missing keys" in response_json["error"]
+
+
+@allure.title("Create artist with invalid data type returns 400")
+@pytest.mark.parametrize(
+    "artist_payload",
+    [
+        {"first_name": 12345, "last_name": "Monet", "birth_year": "1840"},
+        {"first_name": "Claude", "last_name": True, "birth_year": "1840"},
+        {"first_name": "Claude", "last_name": "Monet", "birth_year": []},
+    ],
+    ids=[
+        "invalid_first_name_type",
+        "invalid_last_name_type",
+        "invalid_birth_year_type",
+    ],
+)
+def test_create_artist_with_invalid_data_type(artists_service, artist_payload):
+    # Step 1: Attempt to create an artist using a payload with an invalid data type.
+    error_response = artists_service.client.post("/artists", json=artist_payload)
+
+    # Step 2: Verify the error response is returned.
+    assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
+
+    # Step 3: Verify the error message indicates that field types are incorrect.
+    response_json = error_response.json()
+    assert "error" in response_json
+    assert "All fields must be non-empty strings" in response_json["error"]
+
+
+@allure.title("Create artist with empty payload returns 400")
+def test_create_artist_with_empty_payload(artists_service):
+    # Step 1: Create an artist model instance from a payload with an empty field.
+    invalid_artist = ArtistCreate()
+
+    # Step 2: Attempt to create the artist.
+    error_response = artists_service.create_artist(invalid_artist)
+
+    # Step 3: Verify the error response is returned.
+    assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
+
+    # Step 4: Verify the error message indicates that fields cannot be empty.
+    response_json = error_response.json()
+    assert "error" in response_json
+    assert "Invalid JSON payload" in response_json["error"]
+
+
+@allure.title("Get non-existent artist returns 404")
+def test_get_non_existent_artist(artists_service):
+    # Step 1: Attempt to fetch an artist that doesn't exist.
+    error_response = artists_service.get_artist_by_id("non-existent-id")
+    assert error_response.status_code == http.HTTPStatus.NOT_FOUND

@@ -5,6 +5,7 @@ from python_api_playground.models.artists_model import (
     ArtistCreate,
     ArtistResponse,
     ArtistUpdate,
+    ArtistDeleteResponse
 )
 
 
@@ -24,10 +25,10 @@ class ArtistsService:
         response.raise_for_status()
         return ArtistResponse.model_validate(response.json())
 
+
     def create_artist(self, new_artist: ArtistCreate):
-        payload = new_artist.model_dump()
+        payload = new_artist.model_dump(exclude_none=True)
         response = self.client.post(self.endpoint, json=payload)
-        response.raise_for_status()
         return response
 
     def update_artist(self, updated_artist: ArtistUpdate):
@@ -39,4 +40,4 @@ class ArtistsService:
     def delete_artist(self, user_id: str):
         response = self.client.delete(f"{self.endpoint}/{user_id}")
         response.raise_for_status()
-        return response
+        return ArtistDeleteResponse.model_validate(response.json())

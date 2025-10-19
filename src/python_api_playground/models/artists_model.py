@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field, RootModel, model_validator
 
@@ -6,18 +6,9 @@ from pydantic import BaseModel, Field, RootModel, model_validator
 # --- Request Body Models ---
 
 class ArtistBase(BaseModel):
-    first_name: str = Field(
-        min_length=1,
-        description="Artist's first name (must be non-empty)"
-    )
-    last_name: str = Field(
-        min_length=1,
-        description="Artist's last name (must be non-empty)"
-    )
-    birth_year: str = Field(
-        min_length=1,
-        description="Artist's birth year (must be a non-empty)"
-    )
+    first_name: Optional[str] = Field(None)
+    last_name: Optional[str] = Field(None)
+    birth_year: Optional[str] = Field(None)
 
 
 class ArtistCreate(ArtistBase):
@@ -25,10 +16,7 @@ class ArtistCreate(ArtistBase):
 
 
 class ArtistUpdate(ArtistBase):
-    user_id: str = Field(
-        min_length=1,
-        description="Artist's unique ID (must be non-empty)"
-    )
+    user_id: str
 
 
 # --- Response Models ---
@@ -75,4 +63,8 @@ class ArtistUpdateResponse(RootModel[bool]):
 class ArtistDeleteResponse(RootModel[bool]):
     pass
 
+
 # --- Error Response Models ---
+
+class ErrorResponse(BaseModel):
+    error: str
