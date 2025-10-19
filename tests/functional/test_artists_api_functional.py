@@ -1,8 +1,8 @@
 import http
-
 import allure
 
-from python_api_playground.models.artists_model import ArtistCreate, ArtistResponse
+from python_api_playground.models.artists_model import ArtistResponse
+
 
 @allure.title("Create Artist")
 def test_create_artist(artists_service, generate_artist_data):
