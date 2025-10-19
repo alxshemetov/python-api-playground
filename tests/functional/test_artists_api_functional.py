@@ -98,7 +98,8 @@ def test_delete_artist(artists_service, artist_steps, generate_artist_data):
 
     # Step 2: Delete the artist.
     delete_response = artists_service.delete_artist(str(user_id))
-    assert delete_response.root is True
+    assert delete_response.status_code == http.HTTPStatus.OK
+    assert delete_response.json() is True
 
     # Step 3: Verify the artist is no longer in the full list.
     all_artists_response = artists_service.get_all_artists()

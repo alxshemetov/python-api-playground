@@ -25,7 +25,6 @@ class ArtistsService:
         response.raise_for_status()
         return ArtistResponse.model_validate(response.json())
 
-
     def create_artist(self, new_artist: ArtistCreate):
         payload = new_artist.model_dump(exclude_none=True)
         response = self.client.post(self.endpoint, json=payload)
@@ -40,4 +39,4 @@ class ArtistsService:
     def delete_artist(self, user_id: str):
         response = self.client.delete(f"{self.endpoint}/{user_id}")
         response.raise_for_status()
-        return ArtistDeleteResponse.model_validate(response.json())
+        return response
