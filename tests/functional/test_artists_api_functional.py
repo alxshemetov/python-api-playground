@@ -1,11 +1,13 @@
 import http
+
 import allure
 import pytest
 
-from python_api_playground.models.artists_model import ArtistResponse, ArtistUpdate, ErrorResponse, ArtistCreate
+from python_api_playground.models.artists_model import ArtistResponse, ArtistUpdate, ArtistCreate
 from tests.functional.conftest import fake
-from tests.functional.test_data import artist_test_payloads as payloads
 from tests.functional.helpers.common_helpers import assert_error_response
+from tests.functional.helpers.artists_helpers import assert_artist_data
+from tests.functional.test_data import artist_test_payloads as payloads
 
 
 # --- Positive Tests ---
@@ -22,10 +24,7 @@ def test_create_artist(artists_service, artist_steps, generate_artist_data):
 
     # Step 3: Verify the details of the newly created artist by fetching it directly.
     artist_response: ArtistResponse = artists_service.get_artist_by_id(str(user_id))
-    assert user_id == artist_response.user_id
-    assert artist_response.first_name == new_artist.first_name
-    assert artist_response.last_name == new_artist.last_name
-    assert artist_response.birth_year == new_artist.birth_year
+    assert_artist_data(artist_response, user_id, new_artist)
 
 
 @allure.title("Get All Artists")
@@ -59,10 +58,7 @@ def test_get_artist_by_id(artists_service, artist_steps, generate_artist_data):
 
     # Step 2: Verify the details of the newly created artist by fetching it directly.
     artist_response: ArtistResponse = artists_service.get_artist_by_id(str(user_id))
-    assert user_id == artist_response.user_id
-    assert artist_response.first_name == new_artist.first_name
-    assert artist_response.last_name == new_artist.last_name
-    assert artist_response.birth_year == new_artist.birth_year
+    assert_artist_data(artist_response, user_id, new_artist)
 
 
 @allure.title("Update Artist")
@@ -86,10 +82,7 @@ def test_update_artist(artists_service, artist_steps, generate_artist_data):
 
     # Step 4: Verify the artist's details have been updated.
     updated_artist_response: ArtistResponse = artists_service.get_artist_by_id(str(user_id))
-    assert updated_artist_response.user_id == user_id
-    assert updated_artist_response.first_name == update_data.first_name
-    assert updated_artist_response.last_name == update_data.last_name
-    assert updated_artist_response.birth_year == update_data.birth_year
+    assert_artist_data(updated_artist_response, user_id, update_data)
 
 
 @allure.title("Delete Artist")
