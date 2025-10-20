@@ -5,7 +5,6 @@ from python_api_playground.models.artists_model import ArtistCreate
 from python_api_playground.services.artists_service import ArtistsService
 from tests.functional.steps.artists_steps import ArtistSteps
 
-# Initialize the Faker instance
 fake = Faker()
 
 

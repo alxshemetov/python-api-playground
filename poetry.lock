@@ -60,17 +60,6 @@ files = [
 test = ["coverage", "mypy", "pexpect", "ruff", "wheel"]
 
 [[package]]
-name = "assertpy"
-version = "1.1"
-description = "Simple assertion library for unit testing in python with a fluent API"
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "assertpy-1.1.tar.gz", hash = "sha256:acc64329934ad71a3221de185517a43af33e373bb44dc05b5a9b174394ef4833"},
-]
-
-[[package]]
 name = "attrs"
 version = "25.4.0"
 description = "Classes Without Boilerplate"
@@ -906,24 +895,6 @@ pygments = ">=2.7.2"
 dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "requests", "setuptools", "xmlschema"]
 
 [[package]]
-name = "pytest-check"
-version = "2.6.0"
-description = "A pytest plugin that allows multiple failures per test."
-optional = false
-python-versions = ">=3.9"
-groups = ["main"]
-files = [
-    {file = "pytest_check-2.6.0-py3-none-any.whl", hash = "sha256:a9735020dc0f0219b8a5298d7f90cf6d1f6fe34b709b9ecbb9e0f49393ebab38"},
-    {file = "pytest_check-2.6.0.tar.gz", hash = "sha256:9be4c59a09827129109148c85d7b5964b57f0a5ced1b619459ca30e6f463ca42"},
-]
-
-[package.dependencies]
-pytest = ">=7.0.0"
-
-[package.extras]
-dev = ["build", "tox", "tox-uv"]
-
-[[package]]
 name = "pytest-xdist"
 version = "3.8.0"
 description = "pytest xdist plugin for distributed testing, most importantly across multiple CPUs"
@@ -1171,5 +1142,5 @@ watchdog = ["watchdog (>=2.3)"]
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.14"
-content-hash = "585a12492da09d53e61d93c3853834a47bd32262a320324fa12c5158772092a2"
+python-versions = ">=3.12"
+content-hash = "1807ec1eaf6784471121ace7638f21fc5b78ac491c68cdc74d8b67b721916145"

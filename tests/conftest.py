@@ -7,7 +7,6 @@ from python_api_playground.api_client import APIClient
 
 pytest.register_assert_rewrite("tests.functional.helpers", "tests.functional.steps")
 
-# Load environment variables once for all tests
 load_dotenv()
 
 
