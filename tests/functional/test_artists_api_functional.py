@@ -21,7 +21,7 @@ def test_create_artist(artists_service, artist_steps, generate_artist_data):
 
     # Step 3: Verify the details of the newly created artist by fetching it directly.
     artist_response: ArtistResponse = artists_service.get_artist_by_id(str(user_id))
-    assert user_id == artist_response.user_id
+    assert user_id == artist_response.user_id, "The user_id returned from the GET /artists endpoint does not match."
     assert artist_response.first_name == new_artist.first_name
     assert artist_response.last_name == new_artist.last_name
     assert artist_response.birth_year == new_artist.birth_year
@@ -58,7 +58,7 @@ def test_get_artist_by_id(artists_service, artist_steps, generate_artist_data):
 
     # Step 2: Verify the details of the newly created artist by fetching it directly.
     artist_response: ArtistResponse = artists_service.get_artist_by_id(str(user_id))
-    assert user_id == artist_response.user_id
+    assert user_id == artist_response.user_id, "The user_id returned from the GET /artists endpoint does not match."
     assert artist_response.first_name == new_artist.first_name
     assert artist_response.last_name == new_artist.last_name
     assert artist_response.birth_year == new_artist.birth_year
@@ -85,7 +85,7 @@ def test_update_artist(artists_service, artist_steps, generate_artist_data):
 
     # Step 4: Verify the artist's details have been updated.
     updated_artist_response: ArtistResponse = artists_service.get_artist_by_id(str(user_id))
-    assert updated_artist_response.user_id == user_id
+    assert updated_artist_response.user_id == user_id, "The user_id returned from the GET /artists endpoint does not match."
     assert updated_artist_response.first_name == update_data.first_name
     assert updated_artist_response.last_name == update_data.last_name
     assert updated_artist_response.birth_year == update_data.birth_year
@@ -202,20 +202,16 @@ def test_update_artist_with_empty_field(artists_service, artist_steps, generate_
     new_artist = generate_artist_data
     user_id = artist_steps.create_artist(new_artist)
 
-    # Step 2: If user_id is in the payload, replace it with the actual user_id
-    # if "user_id" in update_payload:
-    #     update_payload["user_id"] = str(user_id)
-
-    # Step 3: Create an ArtistUpdate instance with missing
+    # Step 2: Create an ArtistUpdate instance with missing
     invalid_update = ArtistUpdate(**update_payload)
 
-    # Step 4: Attempt to update the artist
+    # Step 3: Attempt to update the artist
     error_response = artists_service.update_artist(invalid_update)
 
-    # Step 5: Verify the error response is returned
+    # Step 4: Verify the error response is returned
     assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
 
-    # Step 6: Verify the error message indicates that fields cannot be empty.
+    # Step 5: Verify the error message indicates that fields cannot be empty.
     response_json = error_response.json()
     assert "error" in response_json
     assert "All fields must be non-empty strings" in response_json["error"]

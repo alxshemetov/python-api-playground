@@ -32,7 +32,7 @@ class ArtistsService:
         return response
 
     def update_artist(self, updated_artist: ArtistUpdate):
-        payload = updated_artist.model_dump()
+        payload = updated_artist.model_dump(exclude_none=True)
         response = self.client.put(self.endpoint, json=payload)
         return response
 
