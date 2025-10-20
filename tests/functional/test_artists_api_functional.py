@@ -216,4 +216,15 @@ def test_create_artist_with_empty_payload(artists_service):
 def test_get_non_existent_artist(artists_service):
     # Step 1: Attempt to fetch an artist that doesn't exist.
     error_response = artists_service.get_artist_by_id("non-existent-id")
+
+    # Step 2: Verify the error response is returned.
+    assert error_response.status_code == http.HTTPStatus.NOT_FOUND
+
+
+@allure.title("Get Artist with Empty ID")
+def test_get_artist_with_empty_id(artists_service):
+    # Step 1: Attempt to fetch an artist with an empty ID.
+    error_response = artists_service.get_artist_by_id("")
+
+    # Step 2: Verify the error response is returned.
     assert error_response.status_code == http.HTTPStatus.NOT_FOUND

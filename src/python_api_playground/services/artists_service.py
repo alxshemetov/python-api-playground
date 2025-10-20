@@ -22,8 +22,10 @@ class ArtistsService:
 
     def get_artist_by_id(self, user_id: str) -> ArtistResponse:
         response = self.client.get(f"{self.endpoint}/{user_id}")
-        response.raise_for_status()
-        return ArtistResponse.model_validate(response.json())
+        if response.ok:
+            return ArtistResponse.model_validate(response.json())
+        else:
+            return response
 
     def create_artist(self, new_artist: ArtistCreate):
         payload = new_artist.model_dump(exclude_none=True)
