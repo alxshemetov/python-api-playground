@@ -1,4 +1,4 @@
-import http
+from http import HTTPStatus
 
 import allure
 
@@ -13,6 +13,6 @@ class ArtistSteps:
     @allure.step("Create a new artist")
     def create_artist(self, new_artist: ArtistCreate) -> int:
         create_response = self.artists_service.create_artist(new_artist)
-        assert create_response.status_code == http.HTTPStatus.OK
+        assert create_response.status_code == HTTPStatus.OK
         user_id = create_response.json()
         return user_id
