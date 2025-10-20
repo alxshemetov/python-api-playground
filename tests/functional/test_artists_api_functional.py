@@ -5,6 +5,7 @@ import pytest
 from python_api_playground.models.artists_model import ArtistResponse, ArtistUpdate, ErrorResponse, ArtistCreate
 from tests.functional.conftest import fake
 from tests.functional.test_data import artist_test_payloads as payloads
+from tests.functional.helpers.common_helpers import assert_error_response
 
 
 # --- Positive Tests ---
@@ -21,7 +22,7 @@ def test_create_artist(artists_service, artist_steps, generate_artist_data):
 
     # Step 3: Verify the details of the newly created artist by fetching it directly.
     artist_response: ArtistResponse = artists_service.get_artist_by_id(str(user_id))
-    assert user_id == artist_response.user_id, "The user_id returned from the GET /artists endpoint does not match."
+    assert user_id == artist_response.user_id
     assert artist_response.first_name == new_artist.first_name
     assert artist_response.last_name == new_artist.last_name
     assert artist_response.birth_year == new_artist.birth_year
@@ -58,7 +59,7 @@ def test_get_artist_by_id(artists_service, artist_steps, generate_artist_data):
 
     # Step 2: Verify the details of the newly created artist by fetching it directly.
     artist_response: ArtistResponse = artists_service.get_artist_by_id(str(user_id))
-    assert user_id == artist_response.user_id, "The user_id returned from the GET /artists endpoint does not match."
+    assert user_id == artist_response.user_id
     assert artist_response.first_name == new_artist.first_name
     assert artist_response.last_name == new_artist.last_name
     assert artist_response.birth_year == new_artist.birth_year
@@ -85,7 +86,7 @@ def test_update_artist(artists_service, artist_steps, generate_artist_data):
 
     # Step 4: Verify the artist's details have been updated.
     updated_artist_response: ArtistResponse = artists_service.get_artist_by_id(str(user_id))
-    assert updated_artist_response.user_id == user_id, "The user_id returned from the GET /artists endpoint does not match."
+    assert updated_artist_response.user_id == user_id
     assert updated_artist_response.first_name == update_data.first_name
     assert updated_artist_response.last_name == update_data.last_name
     assert updated_artist_response.birth_year == update_data.birth_year
@@ -118,13 +119,8 @@ def test_create_artist_with_empty_field(artists_service, artist_payload):
     # Step 2: Attempt to create the artist.
     error_response = artists_service.create_artist(invalid_artist)
 
-    # Step 3: Verify the error response is returned.
-    assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
-
-    # Step 4: Verify the error message indicates that fields cannot be empty.
-    response_json = error_response.json()
-    assert "error" in response_json
-    assert "All fields must be non-empty strings" in response_json["error"]
+    # Step 3: Verify the error response
+    assert_error_response(error_response, http.HTTPStatus.BAD_REQUEST, "All fields must be non-empty strings")
 
 
 @allure.title("Create artist with missing required field returns 400")
@@ -136,13 +132,8 @@ def test_create_artist_with_missing_field(artists_service, artist_payload):
     # Step 2: Attempt to create the artist. The service will now exclude the missing (None) fields.
     error_response = artists_service.create_artist(invalid_artist)
 
-    # Step 3: Verify the error response is returned.
-    assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
-
-    # Step 4: Verify the error message indicates that a key is missing.
-    response_json = error_response.json()
-    assert "error" in response_json
-    assert "Missing keys" in response_json["error"]
+    # Step 3: Verify the error response
+    assert_error_response(error_response, http.HTTPStatus.BAD_REQUEST, "Missing keys")
 
 
 @allure.title("Create artist with invalid data type returns 400")
@@ -151,13 +142,8 @@ def test_create_artist_with_invalid_data_type(artists_service, artist_payload):
     # Step 1: Attempt to create an artist using a payload with an invalid data type.
     error_response = artists_service.client.post("/artists", json=artist_payload)
 
-    # Step 2: Verify the error response is returned.
-    assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
-
-    # Step 3: Verify the error message indicates that field types are incorrect.
-    response_json = error_response.json()
-    assert "error" in response_json
-    assert "All fields must be non-empty strings" in response_json["error"]
+    # Step 2: Verify the error response
+    assert_error_response(error_response, http.HTTPStatus.BAD_REQUEST, "All fields must be non-empty strings")
 
 
 @allure.title("Create artist with empty payload returns 400")
@@ -168,13 +154,8 @@ def test_create_artist_with_empty_payload(artists_service):
     # Step 2: Attempt to create the artist.
     error_response = artists_service.create_artist(invalid_artist)
 
-    # Step 3: Verify the error response is returned.
-    assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
-
-    # Step 4: Verify the error message indicates that fields cannot be empty.
-    response_json = error_response.json()
-    assert "error" in response_json
-    assert "Invalid JSON payload" in response_json["error"]
+    # Step 3: Verify the error response
+    assert_error_response(error_response, http.HTTPStatus.BAD_REQUEST, "Invalid JSON payload")
 
 
 @allure.title("Get non-existent artist returns 404")
@@ -200,7 +181,7 @@ def test_get_artist_with_empty_id(artists_service):
 def test_update_artist_with_empty_field(artists_service, artist_steps, generate_artist_data, update_payload):
     # Step 1: Create a new artist to update
     new_artist = generate_artist_data
-    user_id = artist_steps.create_artist(new_artist)
+    artist_steps.create_artist(new_artist)
 
     # Step 2: Create an ArtistUpdate instance with missing
     invalid_update = ArtistUpdate(**update_payload)
@@ -208,13 +189,8 @@ def test_update_artist_with_empty_field(artists_service, artist_steps, generate_
     # Step 3: Attempt to update the artist
     error_response = artists_service.update_artist(invalid_update)
 
-    # Step 4: Verify the error response is returned
-    assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
-
-    # Step 5: Verify the error message indicates that fields cannot be empty.
-    response_json = error_response.json()
-    assert "error" in response_json
-    assert "All fields must be non-empty strings" in response_json["error"]
+    # Step 4: Verify the error response
+    assert_error_response(error_response, http.HTTPStatus.BAD_REQUEST, "All fields must be non-empty strings")
 
 
 @allure.title("Update artist with missing required field returns 400")
@@ -234,13 +210,8 @@ def test_update_artist_with_missing_field(artists_service, artist_steps, generat
     # Step 4: Attempt to update the artist
     error_response = artists_service.update_artist(invalid_update)
 
-    # Step 5: Verify the error response is returned
-    assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
-
-    # Step 6: Verify the error message indicates that a key is missing
-    response_json = error_response.json()
-    assert "error" in response_json
-    assert "Missing keys" in response_json["error"]
+    # Step 5: Verify the error response
+    assert_error_response(error_response, http.HTTPStatus.BAD_REQUEST, "Missing keys")
 
 
 @allure.title("Delete non-existent artist returns 404")
