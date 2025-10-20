@@ -4,6 +4,7 @@ import pytest
 
 from python_api_playground.models.artists_model import ArtistResponse, ArtistUpdate, ErrorResponse, ArtistCreate
 from tests.functional.conftest import fake
+from tests.functional.test_data import artist_test_payloads as payloads
 
 
 # --- Positive Tests ---
@@ -109,19 +110,7 @@ def test_delete_artist(artists_service, artist_steps, generate_artist_data):
 # --- Negative Tests ---
 
 @allure.title("Create artist with empty field returns 400")
-@pytest.mark.parametrize(
-    "artist_payload",
-    [
-        {"first_name": "", "last_name": "Monet", "birth_year": "1840"},
-        {"first_name": "Claude", "last_name": "", "birth_year": "1840"},
-        {"first_name": "Claude", "last_name": "Monet", "birth_year": ""},
-    ],
-    ids=[
-        "empty_first_name",
-        "empty_last_name",
-        "empty_birth_year",
-    ],
-)
+@pytest.mark.parametrize("artist_payload", payloads.CREATE_ARTIST_EMPTY_FIELD_PAYLOADS)
 def test_create_artist_with_empty_field(artists_service, artist_payload):
     # Step 1: Create an artist model instance from a payload with an empty field.
     invalid_artist = ArtistCreate(**artist_payload)
@@ -139,19 +128,7 @@ def test_create_artist_with_empty_field(artists_service, artist_payload):
 
 
 @allure.title("Create artist with missing required field returns 400")
-@pytest.mark.parametrize(
-    "artist_payload",
-    [
-        {"last_name": "Monet", "birth_year": "1840"},  # Missing 'first_name'
-        {"first_name": "Claude", "birth_year": "1840"},  # Missing 'last_name'
-        {"first_name": "Claude", "last_name": "Monet"},  # Missing 'birth_year'
-    ],
-    ids=[
-        "missing_first_name",
-        "missing_last_name",
-        "missing_birth_year",
-    ],
-)
+@pytest.mark.parametrize("artist_payload", payloads.CREATE_ARTIST_MISSING_FIELD_PAYLOADS)
 def test_create_artist_with_missing_field(artists_service, artist_payload):
     # Step 1: Create an artist model instance from a payload with a missing required field.
     invalid_artist = ArtistCreate(**artist_payload)
@@ -169,19 +146,7 @@ def test_create_artist_with_missing_field(artists_service, artist_payload):
 
 
 @allure.title("Create artist with invalid data type returns 400")
-@pytest.mark.parametrize(
-    "artist_payload",
-    [
-        {"first_name": 12345, "last_name": "Monet", "birth_year": "1840"},
-        {"first_name": "Claude", "last_name": True, "birth_year": "1840"},
-        {"first_name": "Claude", "last_name": "Monet", "birth_year": []},
-    ],
-    ids=[
-        "invalid_first_name_type",
-        "invalid_last_name_type",
-        "invalid_birth_year_type",
-    ],
-)
+@pytest.mark.parametrize("artist_payload", payloads.CREATE_ARTIST_INVALID_DATA_TYPE_PAYLOADS)
 def test_create_artist_with_invalid_data_type(artists_service, artist_payload):
     # Step 1: Attempt to create an artist using a payload with an invalid data type.
     error_response = artists_service.client.post("/artists", json=artist_payload)
@@ -225,6 +190,67 @@ def test_get_non_existent_artist(artists_service):
 def test_get_artist_with_empty_id(artists_service):
     # Step 1: Attempt to fetch an artist with an empty ID.
     error_response = artists_service.get_artist_by_id("")
+
+    # Step 2: Verify the error response is returned.
+    assert error_response.status_code == http.HTTPStatus.NOT_FOUND
+
+
+@allure.title("Update artist artist with empty field returns 400")
+@pytest.mark.parametrize("update_payload", payloads.UPDATE_ARTIST_EMPTY_FIELD_PAYLOADS)
+def test_update_artist_with_empty_field(artists_service, artist_steps, generate_artist_data, update_payload):
+    # Step 1: Create a new artist to update
+    new_artist = generate_artist_data
+    user_id = artist_steps.create_artist(new_artist)
+
+    # Step 2: If user_id is in the payload, replace it with the actual user_id
+    # if "user_id" in update_payload:
+    #     update_payload["user_id"] = str(user_id)
+
+    # Step 3: Create an ArtistUpdate instance with missing
+    invalid_update = ArtistUpdate(**update_payload)
+
+    # Step 4: Attempt to update the artist
+    error_response = artists_service.update_artist(invalid_update)
+
+    # Step 5: Verify the error response is returned
+    assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
+
+    # Step 6: Verify the error message indicates that fields cannot be empty.
+    response_json = error_response.json()
+    assert "error" in response_json
+    assert "All fields must be non-empty strings" in response_json["error"]
+
+
+@allure.title("Update artist with missing required field returns 400")
+@pytest.mark.parametrize("update_payload", payloads.UPDATE_ARTIST_MISSING_FIELD_PAYLOADS)
+def test_update_artist_with_missing_field(artists_service, artist_steps, generate_artist_data, update_payload):
+    # Step 1: Create a new artist to update
+    new_artist = generate_artist_data
+    user_id = artist_steps.create_artist(new_artist)
+
+    # Step 2: If user_id is in the payload, replace it with the actual user_id
+    if "user_id" in update_payload:
+        update_payload["user_id"] = str(user_id)
+
+    # Step 3: Create an ArtistUpdate instance with missing
+    invalid_update = ArtistUpdate(**update_payload)
+
+    # Step 4: Attempt to update the artist
+    error_response = artists_service.update_artist(invalid_update)
+
+    # Step 5: Verify the error response is returned
+    assert error_response.status_code == http.HTTPStatus.BAD_REQUEST
+
+    # Step 6: Verify the error message indicates that a key is missing
+    response_json = error_response.json()
+    assert "error" in response_json
+    assert "Missing keys" in response_json["error"]
+
+
+@allure.title("Delete non-existent artist returns 404")
+def test_delete_artist_with_invalid_id(artists_service, artist_steps):
+    # Step 1: Attempt to delete an artist that doesn't exist.
+    error_response = artists_service.delete_artist("non-existent-id")
 
     # Step 2: Verify the error response is returned.
     assert error_response.status_code == http.HTTPStatus.NOT_FOUND
