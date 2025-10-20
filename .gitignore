@@ -142,3 +142,7 @@ cython_debug/
 *.log
 *.tmp
 .temp/
+
+# Allure test report files
+allure-results/
+allure-report/
