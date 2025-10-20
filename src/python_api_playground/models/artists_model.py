@@ -16,7 +16,7 @@ class ArtistCreate(ArtistBase):
 
 
 class ArtistUpdate(ArtistBase):
-    user_id: str
+    user_id: Optional[str] = Field(None)
 
 
 # --- Response Models ---
