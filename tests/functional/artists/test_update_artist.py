@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 import pytest
 
-from python_api_playground.models.artists_model import ArtistUpdate, ArtistResponse
+from api_framework.models.artists_model import ArtistUpdate, ArtistResponse
 from tests.functional.conftest import fake
 from tests.functional.helpers.artists_helpers import assert_artist_data
 from tests.functional.helpers.common_helpers import assert_error_response

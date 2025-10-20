@@ -3,7 +3,7 @@ import os
 import pytest
 from dotenv import load_dotenv
 
-from python_api_playground.api_client import APIClient
+from api_framework.api_client import APIClient
 
 pytest.register_assert_rewrite("tests.functional.helpers", "tests.functional.steps")
 

@@ -3,8 +3,8 @@ import http
 import pytest
 from faker import Faker
 
-from python_api_playground.models.artists_model import ArtistCreate
-from python_api_playground.services.artists_service import ArtistsService
+from api_framework.models.artists_model import ArtistCreate
+from api_framework.services.artists_service import ArtistsService
 
 fake = Faker()
 

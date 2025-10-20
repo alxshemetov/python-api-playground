@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from python_api_playground.models.artists_model import ArtistResponse
+from api_framework.models.artists_model import ArtistResponse
 from tests.functional.helpers.artists_helpers import assert_artist_data
 
 

@@ -1,7 +1,7 @@
 from typing import List
 
-from python_api_playground.api_client import APIClient
-from python_api_playground.models.artists_model import (
+from api_framework.api_client import APIClient
+from api_framework.models.artists_model import (
     ArtistCreate,
     ArtistResponse,
     ArtistUpdate,

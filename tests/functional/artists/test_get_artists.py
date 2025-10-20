@@ -1,4 +1,4 @@
-from python_api_playground.models.artists_model import ArtistResponse
+from api_framework.models.artists_model import ArtistResponse
 
 
 def test_get_artists(artists_service, create_new_artist):

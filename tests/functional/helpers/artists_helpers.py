@@ -1,4 +1,4 @@
-from python_api_playground.models.artists_model import ArtistResponse
+from api_framework.models.artists_model import ArtistResponse
 
 
 def assert_artist_data(artist_response: ArtistResponse, expected_user_id, expected_data):
