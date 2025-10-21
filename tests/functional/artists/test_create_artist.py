@@ -8,8 +8,13 @@ from tests.functional.helpers.common_helpers import assert_error_response
 from tests.functional.test_data import artist_test_payloads as payloads
 
 
-def test_create_artist(artists_service, create_new_artist):
-    user_id, new_artist = create_new_artist
+def test_create_artist(artists_service, generate_artist_data):
+    new_artist = generate_artist_data
+
+    create_response = artists_service.create_artist(new_artist)
+    assert create_response.status_code == HTTPStatus.OK
+
+    user_id = create_response.json()
 
     all_artists_response = artists_service.get_all_artists()
     assert any(artist.user_id == user_id for artist in all_artists_response)
