@@ -3,7 +3,7 @@ name = "python-api-playground"
 version = "0.1.0"
 description = "API tests for Toy Testing Example"
 authors = [
-    {name = "aleksei.shemetov",email = "alxshemetov@gmail.com"}
+    { name = "aleksei.shemetov", email = "alxshemetov@gmail.com" }
 ]
 readme = "README.md"
 requires-python = ">=3.12"
@@ -21,8 +21,20 @@ dependencies = [
 ]
 
 [tool.poetry]
-packages = [{include = "python_api_playground", from = "src"}]
+packages = [
+    { include = "api_framework", from = "src" },
+    { include = "app", from = "src" },
+]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+addopts = [
+    "-v", # Verbose output
+    "-l", # Show local variables on failure
+    "--setup-show", # Show fixture setup/teardown
+    "--alluredir=./allure-results", # Allure results directory
+    "--clean-alluredir", # Clean results before each run (optional)
+]
