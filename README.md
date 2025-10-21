@@ -25,7 +25,7 @@ The project follows a structured approach to keep the test code organized and ma
 Make sure you have the following software installed on your machine:
 
 *   Python 3.13 or higher
-*   Poetry
+*   Poetry 2.2.1 or higher
 
 ### Setup
 

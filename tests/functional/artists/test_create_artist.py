@@ -36,7 +36,7 @@ def test_create_artist_with_missing_field(artists_service, artist_payload):
 
 @pytest.mark.parametrize("artist_payload", payloads.CREATE_ARTIST_INVALID_DATA_TYPE_PAYLOADS)
 def test_create_artist_with_invalid_data_type(artists_service, artist_payload):
-    error_response = artists_service.client.post("/artists", json=artist_payload)
+    error_response = artists_service.create_artist_raw(artist_payload)
     assert_error_response(error_response, HTTPStatus.BAD_REQUEST, "All fields must be non-empty strings")
 
 
