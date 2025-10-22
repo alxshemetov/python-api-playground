@@ -10,7 +10,7 @@ from tests.functional.test_data import artist_test_payloads as payloads
 
 
 def test_update_artist(artists_service, create_new_artist):
-    user_id = create_new_artist
+    user_id, new_artist = create_new_artist
 
     update_data = ArtistUpdate(
         user_id=str(user_id),
@@ -23,7 +23,7 @@ def test_update_artist(artists_service, create_new_artist):
     assert update_response.status_code == HTTPStatus.OK
     assert update_response.json() == True
 
-    updated_artist_response: ArtistResponse = artists_service.get_artist_by_id(str(user_id))
+    updated_artist_response = artists_service.get_artist_by_id(str(user_id))
     assert_artist_data(updated_artist_response, user_id, update_data)
 
 

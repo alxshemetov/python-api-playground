@@ -4,7 +4,7 @@ from api_framework.models.artists_model import ArtistResponse
 
 
 def test_delete_artist(artists_service, create_new_artist):
-    user_id = create_new_artist
+    user_id, new_artist = create_new_artist
 
     delete_response = artists_service.delete_artist(str(user_id))
     assert delete_response.status_code == HTTPStatus.OK
