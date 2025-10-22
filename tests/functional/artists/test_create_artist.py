@@ -17,8 +17,8 @@ def test_create_artist(artists_service, generate_artist_data):
     user_id = create_response.json()
 
     all_artists_response = artists_service.get_all_artists()
-    all_artists_response: list[ArtistResponse] = [ArtistResponse.model_validate(artist) for artist in all_artists_response.json()]
-    assert any(artist.user_id == user_id for artist in all_artists_response)
+    all_artists = [ArtistResponse.model_validate(artist) for artist in all_artists_response.json()]
+    assert any(artist.user_id == user_id for artist in all_artists)
 
     artist_response: ArtistResponse = artists_service.get_artist_by_id(str(user_id))
     assert_artist_data(artist_response, user_id, new_artist)
