@@ -20,12 +20,8 @@ class ArtistsService:
         response = self.client.get(self.endpoint)
         return [ArtistResponse.model_validate(artist) for artist in response.json()]
 
-    def get_artist_by_id(self, user_id: str) -> Union[ArtistResponse, Response]:
-        response = self.client.get(f"{self.endpoint}/{user_id}")
-        if response.ok:
-            return ArtistResponse.model_validate(response.json())
-        else:
-            return response
+    def get_artist_by_id(self, user_id: str) -> Response:
+        return self.client.get(f"{self.endpoint}/{user_id}")
 
     def create_artist(self, new_artist: ArtistCreate) -> Response:
         payload = new_artist.model_dump(exclude_none=True)
