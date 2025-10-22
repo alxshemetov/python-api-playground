@@ -17,15 +17,16 @@ class ArtistsService:
         return self.client.get(f"{self.endpoint}/{user_id}")
 
     def create_artist(self, new_artist: ArtistCreate) -> Response:
-        payload = new_artist.model_dump(exclude_none=True)
-        return self.client.post(self.endpoint, json=payload)
+        return self.client.post(self.endpoint, json=new_artist.model_dump())
 
-    def create_artist_raw(self, payload: dict) -> Response:
-        return self.client.post(self.endpoint, json=payload)
+    def create_artist_raw(self, new_artist: dict) -> Response:
+        return self.client.post(self.endpoint, json=new_artist)
 
     def update_artist(self, updated_artist: ArtistUpdate) -> Response:
-        payload = updated_artist.model_dump(exclude_none=True)
-        return self.client.put(self.endpoint, json=payload)
+        return self.client.put(self.endpoint, json=updated_artist.model_dump())
+
+    def update_artist_raw(self, updated_artist: dict) -> Response:
+        return self.client.put(self.endpoint, json=updated_artist)
 
     def delete_artist(self, user_id: str) -> Response:
         return self.client.delete(f"{self.endpoint}/{user_id}")

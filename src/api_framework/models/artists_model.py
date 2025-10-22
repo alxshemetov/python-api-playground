@@ -6,9 +6,9 @@ from pydantic import BaseModel, Field, RootModel, model_validator
 # --- Request Body Models ---
 
 class ArtistBase(BaseModel):
-    first_name: Optional[str] = Field(None)
-    last_name: Optional[str] = Field(None)
-    birth_year: Optional[str] = Field(None)
+    first_name: str = Field(..., min_length=1)
+    last_name: str = Field(..., min_length=1)
+    birth_year: str = Field(..., min_length=1)
 
 
 class ArtistCreate(ArtistBase):
@@ -16,7 +16,7 @@ class ArtistCreate(ArtistBase):
 
 
 class ArtistUpdate(ArtistBase):
-    user_id: Optional[str] = Field(None)
+    user_id: str = Field(..., min_length=1)
 
 
 # --- Response Models ---
