@@ -26,17 +26,13 @@ def test_create_artist(artists_service, generate_artist_data):
 
 @pytest.mark.parametrize("artist_payload", payloads.CREATE_ARTIST_EMPTY_FIELD_PAYLOADS)
 def test_create_artist_with_empty_field(artists_service, artist_payload):
-    invalid_artist = ArtistCreate(**artist_payload)
-
-    error_response = artists_service.create_artist(invalid_artist)
+    error_response = artists_service.create_artist_raw(artist_payload)
     assert_error_response(error_response, HTTPStatus.BAD_REQUEST, "All fields must be non-empty strings")
 
 
 @pytest.mark.parametrize("artist_payload", payloads.CREATE_ARTIST_MISSING_FIELD_PAYLOADS)
 def test_create_artist_with_missing_field(artists_service, artist_payload):
-    invalid_artist = ArtistCreate(**artist_payload)
-
-    error_response = artists_service.create_artist(invalid_artist)
+    error_response = artists_service.create_artist_raw(artist_payload)
     assert_error_response(error_response, HTTPStatus.BAD_REQUEST, "Missing keys")
 
 
@@ -46,8 +42,7 @@ def test_create_artist_with_invalid_data_type(artists_service, artist_payload):
     assert_error_response(error_response, HTTPStatus.BAD_REQUEST, "All fields must be non-empty strings")
 
 
-def test_create_artist_with_empty_payload(artists_service):
-    invalid_artist = ArtistCreate()
-
-    error_response = artists_service.create_artist(invalid_artist)
+@pytest.mark.parametrize("artist_payload", payloads.CREATE_ARTIST_EMPTY_PAYLOAD)
+def test_create_artist_with_empty_payload(artists_service, artist_payload):
+    error_response = artists_service.create_artist_raw(artist_payload)
     assert_error_response(error_response, HTTPStatus.BAD_REQUEST, "Invalid JSON payload")

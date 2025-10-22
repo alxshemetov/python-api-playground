@@ -18,6 +18,10 @@ CREATE_ARTIST_INVALID_DATA_TYPE_PAYLOADS = [
     pytest.param({"first_name": "Claude", "last_name": "Monet", "birth_year": []}, id="invalid_birth_year_type"),
 ]
 
+CREATE_ARTIST_EMPTY_PAYLOAD = [
+    pytest.param({}, id="empty_payload"),
+]
+
 UPDATE_ARTIST_EMPTY_FIELD_PAYLOADS = [
     pytest.param({"user_id": "", "first_name": "Claude", "last_name": "Monet", "birth_year": "1840"}, id="empty_user_id"),
     pytest.param({"user_id": "1", "first_name": "", "last_name": "Monet", "birth_year": "1840"}, id="empty_first_name"),
