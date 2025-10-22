@@ -1,13 +1,7 @@
-from typing import List
-
 from requests import Response
 
 from api_framework.api_client import APIClient
-from api_framework.models.artists_model import (
-    ArtistCreate,
-    ArtistResponse,
-    ArtistUpdate
-)
+from api_framework.models.artists_model import (ArtistCreate, ArtistUpdate)
 
 
 class ArtistsService:
@@ -16,9 +10,8 @@ class ArtistsService:
         self.client = client
         self.endpoint = "/artists"
 
-    def get_all_artists(self) -> List[ArtistResponse]:
-        response = self.client.get(self.endpoint)
-        return [ArtistResponse.model_validate(artist) for artist in response.json()]
+    def get_all_artists(self) -> Response:
+        return self.client.get(self.endpoint)
 
     def get_artist_by_id(self, user_id: str) -> Response:
         return self.client.get(f"{self.endpoint}/{user_id}")
