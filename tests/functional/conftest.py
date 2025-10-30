@@ -1,6 +1,7 @@
 import http
 
 import pytest
+import warnings
 from faker import Faker
 
 from api_framework.models.artists_model import ArtistCreate
@@ -33,6 +34,8 @@ def create_new_artist(artists_service, generate_artist_data):
     yield user_id, new_artist
 
     try:
-        artists_service.delete_artist(str(user_id))
-    except Exception:
-        pass
+        delete_response = artists_service.delete_artist(str(user_id))
+        if delete_response.status_code != http.HTTPStatus.OK:
+            warnings.warn(f"Failed to cleanup artist {user_id}: {delete_response.status_code}")
+    except Exception as e:
+        warnings.warn(f"Exception during artist cleanup {user_id}: {e}")
