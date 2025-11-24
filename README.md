@@ -1,4 +1,4 @@
-# Toy Testing Example
+# API Test Automation Framework | Pytest & Requests
 
 This project is a simple web API example designed to help you learn and practice testing methods. It includes a Flask
 application and a database setup.
